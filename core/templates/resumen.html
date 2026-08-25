@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GeekMatch Trips</title>
+</head>
+
+<body>
+
+    <h1>GeekMatch Trips</h1>
+
+    <h2>Evalúa un lugar para tu viaje</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Nombre del lugar:</label>
+        <input type="text" name="nombre_lugar" required>
+
+        <br><br>
+
+        <label>Nivel de interés (1 a 5):</label>
+        <input
+            type="number"
+            name="nivel_interes"
+            min="1"
+            max="5"
+            required
+        >
+
+        <br><br>
+
+        <label>Precio:</label>
+        <input
+            type="number"
+            name="precio"
+            min="0"
+            required
+        >
+
+        <br><br>
+
+        <label>Presupuesto disponible:</label>
+        <input
+            type="number"
+            name="presupuesto"
+            min="0"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Evaluar lugar
+        </button>
+
+    </form>
+
+
+    {% if resultado_actual %}
+
+        <hr>
+
+        <h2>Resultado GeekMatch</h2>
+
+        <p>
+            <strong>Lugar:</strong>
+            {{ resultado_actual.lugar }}
+        </p>
+
+        <p>
+            <strong>Resultado:</strong>
+            {{ resultado_actual.resultado }}
+        </p>
+
+        <p>
+            <strong>Motivo:</strong>
+            {{ resultado_actual.motivo }}
+        </p>
+
+    {% endif %}
+
+
+    <hr>
+
+    <h2>Lugares evaluados</h2>
+
+    {% if registros %}
+
+        <table border="1">
+
+            <tr>
+                <th>Lugar</th>
+                <th>Interés</th>
+                <th>Precio</th>
+                <th>Presupuesto</th>
+                <th>Resultado</th>
+            </tr>
+
+            {% for registro in registros %}
+
+                <tr>
+                    <td>{{ registro.lugar }}</td>
+                    <td>{{ registro.interes }}</td>
+                    <td>{{ registro.precio }}</td>
+                    <td>{{ registro.presupuesto }}</td>
+                    <td>{{ registro.resultado }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+
+        <p>Todavía no hay lugares evaluados.</p>
+
+    {% endif %}
+
+</body>
+
+</html>

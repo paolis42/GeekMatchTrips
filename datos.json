@@ -1,0 +1,34 @@
+[
+    {
+        "lugar": "Museo",
+        "interes": 5,
+        "precio": 200,
+        "presupuesto": 500,
+        "resultado": "Recomendado",
+        "motivo": "El lugar tiene alta afinidad con tus intereses y está dentro de tu presupuesto."
+    },
+    {
+        "lugar": "museo ghibli",
+        "interes": 5,
+        "precio": 20000,
+        "presupuesto": 30000,
+        "resultado": "Recomendado",
+        "motivo": "El lugar tiene alta afinidad con tus intereses y está dentro de tu presupuesto."
+    },
+    {
+        "lugar": "pokemon center",
+        "interes": 5,
+        "precio": 10000,
+        "presupuesto": 50000,
+        "resultado": "Recomendado",
+        "motivo": "El lugar tiene alta afinidad con tus intereses y está dentro de tu presupuesto."
+    },
+    {
+        "lugar": "notre-dame",
+        "interes": 4,
+        "precio": 1000,
+        "presupuesto": 50000,
+        "resultado": "Recomendado",
+        "motivo": "El lugar tiene alta afinidad con tus intereses y está dentro de tu presupuesto."
+    }
+]
