@@ -7,40 +7,84 @@
 <body>
 
     <h1>GeekMatch Trips</h1>
+
+    <p>
+        Usuario: <strong>{{ request.user.username }}</strong>
+        |
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
+    </p>
+
     <h2>Lugares evaluados</h2>
 
-    <a href="{% url 'crear' %}">Agregar nuevo lugar</a>
+    {% if puede_crear %}
+        <a href="{% url 'crear' %}">Agregar nuevo lugar</a>
+        <br><br>
+    {% endif %}
 
     <hr>
 
     {% if registros %}
+
         <table border="1" cellpadding="8">
+
             <tr>
                 <th>Lugar</th>
                 <th>Interés</th>
                 <th>Precio</th>
                 <th>Presupuesto</th>
                 <th>Resultado</th>
-                <th>Acciones</th>
+
+                {% if es_admin %}
+                    <th>Acciones</th>
+                {% endif %}
             </tr>
 
             {% for registro in registros %}
             <tr>
+
                 <td>{{ registro.nombre_lugar }}</td>
-                <td>{{ registro.nivel_interes }}</td>
-                <td>{{ registro.precio }}</td>
-                <td>{{ registro.presupuesto }}</td>
-                <td>{{ registro.resultado }}</td>
+
                 <td>
-                    <a href="{% url 'editar' registro.id %}">Editar</a>
-                    |
-                    <a href="{% url 'eliminar' registro.id %}">Eliminar</a>
+                    {{ registro.nivel_interes }}
                 </td>
+
+                <td>
+                    {{ registro.precio }}
+                </td>
+
+                <td>
+                    {{ registro.presupuesto }}
+                </td>
+
+                <td>
+                    {{ registro.resultado }}
+                </td>
+
+                {% if es_admin %}
+                <td>
+
+                    <a href="{% url 'editar' registro.id %}">
+                        Editar
+                    </a>
+
+                    |
+
+                    <a href="{% url 'eliminar' registro.id %}">
+                        Eliminar
+                    </a>
+
+                </td>
+                {% endif %}
+
             </tr>
             {% endfor %}
+
         </table>
+
     {% else %}
+
         <p>No hay registros disponibles.</p>
+
     {% endif %}
 
 </body>

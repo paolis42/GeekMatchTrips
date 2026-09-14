@@ -1,36 +1,95 @@
+from django.contrib.auth import (
+    authenticate,
+    login as auth_login,
+    logout as auth_logout,
+)
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 
 from solucion import decidir
 from .models import Registro
 
 
-# READ - mostrar registros
+# -------------------------------------------------
+# ROLES Y PERMISOS
+# -------------------------------------------------
+
+def es_admin(user):
+    return user.is_authenticated and (
+        user.is_superuser
+        or user.groups.filter(name="admin").exists()
+    )
+
+
+def puede_crear(user):
+    return user.is_authenticated and (
+        es_admin(user)
+        or user.groups.filter(name="normal").exists()
+    )
+
+
+# -------------------------------------------------
+# READ - MOSTRAR REGISTROS
+# viewer, normal y admin pueden ver
+# -------------------------------------------------
+
+@login_required(login_url="login")
 def lista(request):
     registros = Registro.objects.filter(eliminado=False)
 
     return render(
         request,
         "lista.html",
-        {"registros": registros}
+        {
+            "registros": registros,
+            "puede_crear": puede_crear(request.user),
+            "es_admin": es_admin(request.user),
+        }
     )
 
 
-# CREATE - crear registro
+# -------------------------------------------------
+# CREATE - CREAR REGISTRO
+# admin y normal pueden crear
+# -------------------------------------------------
+
+@login_required(login_url="login")
 def crear(request):
+
+    if not puede_crear(request.user):
+        raise PermissionDenied
+
     error = None
 
     if request.method == "POST":
-        nombre_lugar = request.POST.get("nombre_lugar", "").strip()
+        nombre_lugar = request.POST.get(
+            "nombre_lugar",
+            ""
+        ).strip()
 
         try:
-            nivel_interes = int(request.POST.get("nivel_interes", ""))
-            precio = int(request.POST.get("precio", ""))
-            presupuesto = int(request.POST.get("presupuesto", ""))
+            nivel_interes = int(
+                request.POST.get("nivel_interes", "")
+            )
+
+            precio = int(
+                request.POST.get("precio", "")
+            )
+
+            presupuesto = int(
+                request.POST.get("presupuesto", "")
+            )
 
         except ValueError:
-            error = "Interés, precio y presupuesto deben ser números enteros."
+            error = (
+                "Interés, precio y presupuesto "
+                "deben ser números enteros."
+            )
 
         else:
+            # Reutilizamos la regla de negocio
+            # definida en solucion.py
             resultado, motivo = decidir(
                 nivel_interes,
                 precio,
@@ -58,8 +117,17 @@ def crear(request):
     )
 
 
-# UPDATE - editar registro
+# -------------------------------------------------
+# UPDATE - EDITAR REGISTRO
+# solo admin puede editar
+# -------------------------------------------------
+
+@login_required(login_url="login")
 def editar(request, pk):
+
+    if not es_admin(request.user):
+        raise PermissionDenied
+
     registro = get_object_or_404(
         Registro,
         pk=pk,
@@ -69,17 +137,33 @@ def editar(request, pk):
     error = None
 
     if request.method == "POST":
-        nombre_lugar = request.POST.get("nombre_lugar", "").strip()
+        nombre_lugar = request.POST.get(
+            "nombre_lugar",
+            ""
+        ).strip()
 
         try:
-            nivel_interes = int(request.POST.get("nivel_interes", ""))
-            precio = int(request.POST.get("precio", ""))
-            presupuesto = int(request.POST.get("presupuesto", ""))
+            nivel_interes = int(
+                request.POST.get("nivel_interes", "")
+            )
+
+            precio = int(
+                request.POST.get("precio", "")
+            )
+
+            presupuesto = int(
+                request.POST.get("presupuesto", "")
+            )
 
         except ValueError:
-            error = "Interés, precio y presupuesto deben ser números enteros."
+            error = (
+                "Interés, precio y presupuesto "
+                "deben ser números enteros."
+            )
 
         else:
+            # Se vuelve a calcular el resultado
+            # al editar los datos
             resultado, motivo = decidir(
                 nivel_interes,
                 precio,
@@ -108,8 +192,17 @@ def editar(request, pk):
     )
 
 
-# DELETE lógico
+# -------------------------------------------------
+# DELETE LÓGICO
+# solo admin puede eliminar
+# -------------------------------------------------
+
+@login_required(login_url="login")
 def eliminar(request, pk):
+
+    if not es_admin(request.user):
+        raise PermissionDenied
+
     registro = get_object_or_404(
         Registro,
         pk=pk,
@@ -123,5 +216,55 @@ def eliminar(request, pk):
     return render(
         request,
         "confirmar.html",
-        {"registro": registro}
+        {
+            "registro": registro
+        }
     )
+
+
+# -------------------------------------------------
+# LOGIN
+# -------------------------------------------------
+
+def iniciar_sesion(request):
+    error = None
+
+    if request.method == "POST":
+        username = request.POST.get(
+            "username",
+            ""
+        ).strip()
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
+        usuario = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if usuario is not None:
+            auth_login(request, usuario)
+            return redirect("lista")
+
+        error = "Usuario o contraseña incorrectos."
+
+    return render(
+        request,
+        "login.html",
+        {
+            "error": error
+        }
+    )
+
+
+# -------------------------------------------------
+# LOGOUT
+# -------------------------------------------------
+
+def cerrar_sesion(request):
+    auth_logout(request)
+    return redirect("login")
