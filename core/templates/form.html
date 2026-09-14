@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ accion }} lugar</title>
+</head>
+<body>
+
+    <h1>{{ accion }} lugar</h1>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Nombre del lugar:</label><br>
+        <input
+            type="text"
+            name="nombre_lugar"
+            value="{{ registro.nombre_lugar|default:'' }}"
+            required
+        >
+        <br><br>
+
+        <label>Nivel de interés (1 a 5):</label><br>
+        <input
+            type="number"
+            name="nivel_interes"
+            value="{{ registro.nivel_interes|default:'' }}"
+            required
+        >
+        <br><br>
+
+        <label>Precio:</label><br>
+        <input
+            type="number"
+            name="precio"
+            value="{{ registro.precio|default:'' }}"
+            required
+        >
+        <br><br>
+
+        <label>Presupuesto:</label><br>
+        <input
+            type="number"
+            name="presupuesto"
+            value="{{ registro.presupuesto|default:'' }}"
+            required
+        >
+        <br><br>
+
+        <button type="submit">{{ accion }}</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'lista' %}">Volver</a>
+
+</body>
+</html>

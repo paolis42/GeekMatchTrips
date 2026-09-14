@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GeekMatch Trips - Registros</title>
+</head>
+<body>
+
+    <h1>GeekMatch Trips</h1>
+    <h2>Lugares evaluados</h2>
+
+    <a href="{% url 'crear' %}">Agregar nuevo lugar</a>
+
+    <hr>
+
+    {% if registros %}
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Lugar</th>
+                <th>Interés</th>
+                <th>Precio</th>
+                <th>Presupuesto</th>
+                <th>Resultado</th>
+                <th>Acciones</th>
+            </tr>
+
+            {% for registro in registros %}
+            <tr>
+                <td>{{ registro.nombre_lugar }}</td>
+                <td>{{ registro.nivel_interes }}</td>
+                <td>{{ registro.precio }}</td>
+                <td>{{ registro.presupuesto }}</td>
+                <td>{{ registro.resultado }}</td>
+                <td>
+                    <a href="{% url 'editar' registro.id %}">Editar</a>
+                    |
+                    <a href="{% url 'eliminar' registro.id %}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No hay registros disponibles.</p>
+    {% endif %}
+
+</body>
+</html>
