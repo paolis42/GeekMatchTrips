@@ -12,7 +12,7 @@ La información suele estar distribuida en diferentes sitios, lo que puede dific
 
 GeekMatch Trips busca apoyar la planificación de viajes personalizados.
 
-En esta primera versión, el programa evaluará un lugar turístico a la vez según el nivel de interés del usuario, el precio del lugar y su presupuesto disponible. Como resultado, indicará si el lugar es recomendado o no y explicará el motivo de la decisión.
+En esta primera versión, el programa evaluará un lugar turístico a la vez según el nivel de interés del usuario, el precio del lugar y su presupuesto disponible. Como resultado, indicará si el lugar es recomendado o no y explicará el motivo de la decisión. La regla de decisión será implementada en Python y reutilizada posteriormente desde la aplicación Django.
 
 ### Alcance
 
@@ -122,13 +122,13 @@ Resultado:
 
 ### Paquete externo
 
-Se utilizará el paquete `tabulate` para mostrar en consola una tabla ordenada con los lugares evaluados y sus resultados.
+Se utilizará el paquete externo tabulate para mostrar en consola una tabla ordenada con todos los registros almacenados en datos.json, incluyendo lugar, interés, precio, presupuesto, resultado y motivo.
 
 Los registros serán almacenados en el archivo `datos.json`.
 
 ### Pantalla web
 
-Se utilizará Django para mostrar los datos almacenados en `datos.json`.
+La vista Django leerá los registros almacenados en datos.json y reutilizará la función decidir() definida en solucion.py para evaluar nuevos lugares enviados desde el formulario
 
 La dirección de la página será:
 
